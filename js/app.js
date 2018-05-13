@@ -5,11 +5,16 @@ const title = document.querySelector('#title');
 const otherJobTitle = document.querySelector('#other-title');
 
 const design = document.querySelector('#design');
-let color = document.querySelector('#color');
+const color = document.querySelector('#color');
 const punsShirts = document.querySelector('#punsShirts');
 const heartShirts = document.querySelector('#heartShirts');
 let heartShirtSelection = false;
 let punsShirtSelection = false;
+
+const activitiesContainer = document.querySelector('.activities');
+const activities = document.querySelectorAll('input[type="checkbox"]');
+let activitySum = 0;
+let activitySumHTML = '';
 
 otherJobTitle.style.display = 'none';
 
@@ -47,13 +52,23 @@ design.onchange = (e) => {
   }
 }
 
-// const activities = document.querySelectorAll('input[type="checkbox"]');
 
-// for (let i = 0; i < activities.length; i++) {
-//   activities[i].onchange = (e) => {
-//     let activity = activities[i].parentNode.textContent;
-//     let activityCost = activity.replace(/\D/g, "");
-//     activityCost = parseInt(activityCost);
-//     console.log(activityCost)
-//   }
-// }
+activitySumHTML = document.createTextNode(`$${activitySum}`);
+activitiesContainer.appendChild(activitySumHTML);
+
+// Iterates over each activity checkbox and adds a onchange event
+// which calculates the total amount and appends to the DOM
+activities.forEach((activity) => {
+  activity.onchange = (e) => {
+    const activityString = e.target.parentNode.textContent;
+
+    if (e.target.checked) {
+      activitySum += parseInt(activityString.split('$').pop());
+    } else {
+      activitySum -= parseInt(activityString.split('$').pop());
+    }
+
+   activitySumHTML.nodeValue = `$${activitySum}`;
+  }
+});
+

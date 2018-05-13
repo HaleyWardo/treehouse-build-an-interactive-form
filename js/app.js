@@ -5,9 +5,11 @@ const title = document.querySelector('#title');
 const otherJobTitle = document.querySelector('#other-title');
 
 const design = document.querySelector('#design');
-
-let colorOptions = document.querySelectorAll('#color option');
-colorOptions = Array.from(colorOptions);
+let color = document.querySelector('#color');
+const punsShirts = document.querySelector('#punsShirts');
+const heartShirts = document.querySelector('#heartShirts');
+let heartShirtSelection = false;
+let punsShirtSelection = false;
 
 otherJobTitle.style.display = 'none';
 
@@ -23,24 +25,35 @@ title.onchange = (e) => {
   }
 }
 
+// Event listener for t-shirt design
 design.onchange = (e) => {
+
   const designValue = e.target.value.toLowerCase();
-  // let a = Array.from(colorOptions).filter(option => option.innerHTML.toLowerCase() && option.innerHTML.toLowerCase().includes(designValue));
 
-  // for (let i = 0; i < colorOptions.length; i++) {
-  //   colorOptions[i].style.display = 'inline';
+  if (heartShirtSelection) {
+    color.appendChild(punsShirts);
+    heartShirtSelection = false;
+  } else if (punsShirtSelection) {
+    color.appendChild(heartShirts);
+    punsShirtSelection = false;
+  }
 
-  //   if (designValue === 'js puns' && colorOptions[i].textContent.includes('Puns shirt only')) {
-  //     colorOptions[i].style.display = 'inline';
-  //   } else {
-  //     colorOptions[i].style.display = 'none';
-  //   }
-
-  //   if (designValue === 'heart js' && colorOptions[i].textContent.includes('JS shirt only')) {
-  //     colorOptions[i].style.display = 'inline';
-  //   } else {
-  //     colorOptions[i].style.display = 'none';
-  //   }
-
-  // }
+  if (designValue === 'js puns') {
+    punsShirtSelection = true;
+    heartShirts.remove()
+  } else {
+    heartShirtSelection = true;
+    punsShirts.remove()
+  }
 }
+
+// const activities = document.querySelectorAll('input[type="checkbox"]');
+
+// for (let i = 0; i < activities.length; i++) {
+//   activities[i].onchange = (e) => {
+//     let activity = activities[i].parentNode.textContent;
+//     let activityCost = activity.replace(/\D/g, "");
+//     activityCost = parseInt(activityCost);
+//     console.log(activityCost)
+//   }
+// }

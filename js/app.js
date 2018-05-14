@@ -199,30 +199,40 @@ submitButton.addEventListener('click', (e) => {
     activityErrorMessage = true;
   }
 
-  let zipcodeRegex = /^(\d{5})?$/;
-  let zipcode = document.querySelector('#zip');
-  if (zipcodeRegex.test(zipcode.value) === false) {
-    zipcode.value = ''
-    zipcode.placeholder = 'Enter 5 digit zip';
-    zipcode.style.border = '2px dashed red';
-  }
+  // let cvvRegex = /^(\d{3})?$/;
+  // let cvv = document.querySelector('#cvv');
 
-  let cvvRegex = /^(\d{3})?$/;
-  let cvv = document.querySelector('#cvv');
-  if (cvvRegex.test(cvv.value) === false) {
-    cvv.value = ''
-    cvv.placeholder = 'Enter 3 digit';
-    cvv.style.border = '2px dashed red';
-  }
 
-  // let ccNumberRegex = /^(\d{16})?$/;
-  // let ccNumber = document.querySelector('#cc-num');
-  // if (ccNumberRegex.text(ccNumber.value) === false) {
-  //   ccNumber.value = ''
-  //   ccNumber.placeholder = 'Enter 16 digit credit card number';
-  //   ccNumber.style.border = '2px dashed red';
+  // if (cvvRegex.test(cvv.value) === false) {
+  //   cvv.value = ''
+  //   cvv.placeholder = 'Enter 3 digit';
+  //   cvv.style.border = '2px dashed red';
   // }
+
+
+
+  let ccNumber = document.querySelector('#cc-num');
+  let zipcode = document.querySelector('#zip');
+  let cvv = document.querySelector('#cvv');
+  let email = document.querySelector('#mail');
+
+
+  let ccNumberRegex = /^[0-9]{13,16}$/;
+  let zipcodeRegex = /^(\d{5})?$/;
+  let cvvRegex = /^(\d{3})?$/;
+  let emailRegex = /[^\s@]+@[^\s@]+\.[^\s@]+/
+
+  let inputFormat = (element, regex, placeholderText) => {
+    if (regex.test(element.value) === false) {
+      element.value = '';
+      element.placeholder = placeholderText;
+      element.style.border = '2px dashed red';
+    }
+  }
+
+  inputFormat(ccNumber, ccNumberRegex, 'Enter 16 digit credit card number');
+  inputFormat(zipcode, zipcodeRegex, 'Enter 3 digit');
+  inputFormat(cvv, cvvRegex, 'Enter 3 digit');
+  inputFormat(email, emailRegex, 'Enter a valid email address');
 })
-
-
 

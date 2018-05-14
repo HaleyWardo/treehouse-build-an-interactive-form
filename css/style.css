@@ -105,6 +105,12 @@ input::placeholder {
 	color: red;
 }
 
+#activityError {
+	margin-bottom: 20px;
+    font-size: 18px;
+    color: red;
+}
+
 button {
 	color: #fff;
 	padding: .55em 1.25em;

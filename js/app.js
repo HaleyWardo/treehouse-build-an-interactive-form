@@ -41,9 +41,22 @@ titleSelect.onchange = (e) => {
   }
 }
 
-// Event listener for t-shirt design
-designSelect.onchange = (e) => {
 
+//DUPLICATES
+// Event listener for t-shirt design
+ if (designSelect.value === 'Select Theme') {
+    punsShirts.remove()
+    heartShirts.remove()
+    heartShirtSelection = true;
+    punsShirtSelection = true;
+    color.style.display = 'none';
+
+  }
+  let theme = document.querySelector('#theme');
+
+designSelect.onchange = (e) => {
+  theme.disabled = true;
+  color.style.display = 'inline';
   const designValue = e.target.value.toLowerCase();
 
   if (heartShirtSelection) {
@@ -64,12 +77,13 @@ designSelect.onchange = (e) => {
 }
 
 activitySumHTML = document.createTextNode(`$${activitySum}`);
-activitiesContainer.appendChild(activitySumHTML);
 
 // Iterates over each activity checkbox and adds a onchange event
 // which calculates the total amount and appends to the DOM
 activities.forEach((activity) => {
   activity.onchange = (e) => {
+    activitiesContainer.appendChild(activitySumHTML);
+
     const activityString = e.target.parentNode.textContent;
     let activityCost = parseInt(activityString.split('$').pop());
 
@@ -101,7 +115,20 @@ activities.forEach((activity) => {
 
 // Event listener for payment options
 // Hides fields that don't pertain to that payment option
+// DUPLICATES
+if (paymentSelect.value === 'select_method') {
+  paypalContainer.style.display = 'none';
+  bitcoinContainer.style.display = 'none';
+  creditCardContainer.style.display = 'none';
+  creditCard = true;
+  paypal = true;
+  bitcoin = true;
+}
+
+let paymentMethod = document.querySelector('#paymentMethod');
+
 paymentSelect.onchange = (e) => {
+  paymentMethod.disabled = true;
   let paymentValue = e.target.value;
 
   if (creditCard) {
@@ -145,8 +172,8 @@ paymentSelect.onchange = (e) => {
 
 const inputform = document.querySelectorAll('input');
 const legend = document.querySelector('.activities legend');
-let activityError = 'Please select an activity';
-activityError = document.createTextNode(activityError);
+let activityError = `<div id="activityError">Please select an activity</div>`;
+activityErrorMessage = false;
 
 submitButton.addEventListener('click', (e) => {
   e.preventDefault();
@@ -156,11 +183,46 @@ submitButton.addEventListener('click', (e) => {
     if (inputform[i].value === '') {
       inputform[i].style.border = '2px dashed red';
       inputform[i].placeholder = 'Required';
-      document.documentElement.scrollTop = 0;
+      // document.documentElement.scrollTop = 0;
+    } else {
+      inputform[i].style.border = '2px solid #c1deeb';
+    }
+
+    if (activityErrorMessage) {
+      document.querySelector('#activityError').remove();
+      activityErrorMessage = false;
     }
   }
 
   if (isChecked === false) {
-    activitiesContainer.prepend(activityError);
+    activitiesContainer.insertAdjacentHTML('afterbegin', activityError);
+    activityErrorMessage = true;
   }
+
+  let zipcodeRegex = /^(\d{5})?$/;
+  let zipcode = document.querySelector('#zip');
+  if (zipcodeRegex.test(zipcode.value) === false) {
+    zipcode.value = ''
+    zipcode.placeholder = 'Enter 5 digit zip';
+    zipcode.style.border = '2px dashed red';
+  }
+
+  let cvvRegex = /^(\d{3})?$/;
+  let cvv = document.querySelector('#cvv');
+  if (cvvRegex.test(cvv.value) === false) {
+    cvv.value = ''
+    cvv.placeholder = 'Enter 3 digit';
+    cvv.style.border = '2px dashed red';
+  }
+
+  // let ccNumberRegex = /^(\d{16})?$/;
+  // let ccNumber = document.querySelector('#cc-num');
+  // if (ccNumberRegex.text(ccNumber.value) === false) {
+  //   ccNumber.value = ''
+  //   ccNumber.placeholder = 'Enter 16 digit credit card number';
+  //   ccNumber.style.border = '2px dashed red';
+  // }
 })
+
+
+

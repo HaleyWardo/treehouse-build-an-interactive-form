@@ -52,7 +52,6 @@ design.onchange = (e) => {
   }
 }
 
-
 activitySumHTML = document.createTextNode(`$${activitySum}`);
 activitiesContainer.appendChild(activitySumHTML);
 
@@ -68,7 +67,15 @@ activities.forEach((activity) => {
       activitySum -= parseInt(activityString.split('$').pop());
     }
 
-   activitySumHTML.nodeValue = `$${activitySum}`;
+    activitySumHTML.nodeValue = `$${activitySum}`;
   }
 });
+
+
+// Regex to get start/end times in format:
+// time[0] = start
+// time[1] = end
+
+// activityString.match(/([0-9]|[0-9][0-9])(am|pm)/gmi);
+
 

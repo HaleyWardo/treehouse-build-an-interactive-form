@@ -33,7 +33,49 @@ const legend = document.querySelector('.activities legend');
 let activityError = `<div id="activityError">Please select an activity</div>`;
 activityErrorMessage = false;
 
-otherJobTitle.style.display = 'none';
+/**
+ * Validates the input element and sets the styling if
+ * in an error state.
+ *
+ * @param {any} element
+ * @param {RegExp} regex
+ * @param {String} placeholderText
+ * @returns {Boolean} - true if there are errors, otherwise false
+ */
+const inputFormatValidation = (element, regex, placeholderText) => {
+  if (regex.test(element.value) === false) {
+    element.value = '';
+    element.placeholder = placeholderText;
+    element.style.border = '2px dashed red';
+    return true;
+  } else {
+    return false;
+  }
+};
+
+/**
+ * Sets the select previousElementSibling color.
+ *
+ * @param {any} element
+ * @param {String} color
+ */
+const selectFormatValidation = (element, color = 'red') => {
+  element.previousElementSibling.style.color = color;
+};
+
+/**
+ * Sets the provided element to `display: 'none'`.
+ *
+ * @param {any} element - HTML Element
+ */
+const setElementDisplay = (element, value = 'none') => {
+  if (element) {
+    element.style.display = value;
+  }
+};
+
+// Hide job title element by default
+setElementDisplay(otherJobTitle);
 
 /**
  * Event listener for job role options.
@@ -41,11 +83,11 @@ otherJobTitle.style.display = 'none';
  * @param {any} e
  */
 titleSelect.onchange = (e) => {
-  otherJobTitle.style.display = 'none';
+  setElementDisplay(otherJobTitle);
   const titleValue = e.target.value.toLowerCase();
 
   if (titleValue === 'other') {
-    otherJobTitle.style.display = '';
+    setElementDisplay(otherJobTitle, '');
     otherJobTitle.focus();
   }
 }
@@ -56,7 +98,7 @@ if (designSelect.value === 'Select Theme') {
   heartShirts.remove();
   heartShirtSelection = true;
   punsShirtSelection = true;
-  color.style.display = 'none';
+  setElementDisplay(colorSelect);
 }
 
 /**
@@ -65,13 +107,20 @@ if (designSelect.value === 'Select Theme') {
  */
 designSelect.onchange = (e) => {
   theme.disabled = true;
-  color.style.display = 'inline';
+  setElementDisplay(colorSelect, 'inline');
+
   const designValue = e.target.value.toLowerCase();
+
+  if (designValue) {
+    selectFormatValidation(designSelect, '#000');
+  }
 
   if (heartShirtSelection) {
     colorSelect.appendChild(punsShirts);
     heartShirtSelection = false;
-  } else if (punsShirtSelection) {
+  }
+
+  if (punsShirtSelection) {
     colorSelect.appendChild(heartShirts);
     punsShirtSelection = false;
   }
@@ -96,7 +145,7 @@ activities.forEach((activity) => {
     activitiesContainer.appendChild(activitySumHTML);
 
     const activityString = e.target.parentNode.textContent;
-    let activityCost = parseInt(activityString.split('$').pop());
+    const activityCost = parseInt(activityString.split('$').pop());
 
     e.target.checked ? activitySum += activityCost : activitySum -= activityCost;
 
@@ -113,7 +162,7 @@ activities.forEach((activity) => {
     // Iterates over each activity labels and compares clicked checkbox time
     // with other activity times and disables checkbox if activity is at the
     // same time
-    let activityParent = document.querySelectorAll('.activities label');
+    const activityParent = document.querySelectorAll('.activities label');
     for (let i = 0; i < activityParent.length; i++) {
       activityParentForm = activityParent[i].textContent;
 
@@ -132,9 +181,9 @@ activities.forEach((activity) => {
 // Event listener for payment options
 // Hides fields that don't pertain to that payment option
 if (paymentSelect.value === 'select_method') {
-  paypalContainer.style.display = 'none';
-  bitcoinContainer.style.display = 'none';
-  creditCardContainer.style.display = 'none';
+  setElementDisplay(paypalContainer);
+  setElementDisplay(bitcoinContainer);
+  setElementDisplay(creditCardContainer);
   creditCard = true;
   paypal = true;
   bitcoin = true;
@@ -149,12 +198,16 @@ let paymentMethod = document.querySelector('#paymentMethod');
  */
 paymentSelect.onchange = (e) => {
   paymentMethod.disabled = true;
-  let paymentValue = e.target.value;
+  const paymentValue = e.target.value;
 
-  let paymentMethodSelection = (method, displayValue, container1, container2, state) => {
+  if (paymentSelect) {
+    selectFormatValidation(paymentSelect, '#000');
+  }
+
+  const paymentMethodSelection = (method, displayValue, container1, container2, state) => {
     if (method) {
-      container1.style.display = displayValue;
-      container2.style.display = displayValue;
+      setElementDisplay(container1, displayValue);
+      setElementDisplay(container2, displayValue);
       method = state;
     }
   }
@@ -165,18 +218,18 @@ paymentSelect.onchange = (e) => {
 
   switch (paymentValue) {
     case 'credit card' :
-      paypalContainer.style.display = 'none';
-      bitcoinContainer.style.display = 'none';
+      setElementDisplay(paypalContainer);
+      setElementDisplay(bitcoinContainer);
       creditCard = true;
       break;
     case 'paypal' :
-      creditCardContainer.style.display = 'none';
-      bitcoinContainer.style.display = 'none';
+      setElementDisplay(creditCardContainer);
+      setElementDisplay(bitcoinContainer);
       paypal = true;
       break;
     case 'bitcoin' :
-      creditCardContainer.style.display = 'none';
-      paypalContainer.style.display = 'none';
+      setElementDisplay(creditCardContainer);
+      setElementDisplay(paypalContainer);
       bitcoin = true;
       break;
     default :
@@ -189,22 +242,24 @@ paymentSelect.onchange = (e) => {
  * provides error messages.
  */
 submitButton.addEventListener('click', (e) => {
-  e.preventDefault();
-  let isChecked = document.querySelectorAll('input:checked').length === 0 ? false : true;
+  let errors = [];
+  const isChecked = document.querySelectorAll('input:checked').length === 0 ? false : true;
 
   for (i = 0; i < inputform.length; i++) {
     if (inputform[i].value === '') {
-      inputform[i].style.border = '2px dashed red';
-      inputform[i].placeholder = 'Required';
-      // document.documentElement.scrollTop = 0;
+
+      // inputform[i].style.border = '2px dashed red';
+      // inputform[i].placeholder = 'Required';
+
+      document.documentElement.scrollTop = 0;
     } else {
       inputform[i].style.border = '2px solid #c1deeb';
     }
+  }
 
-    if (activityErrorMessage) {
-      document.querySelector('#activityError').remove();
-      activityErrorMessage = false;
-    }
+  if (activityErrorMessage) {
+    document.querySelector('#activityError').remove();
+    activityErrorMessage = false;
   }
 
   if (isChecked === false) {
@@ -212,26 +267,38 @@ submitButton.addEventListener('click', (e) => {
     activityErrorMessage = true;
   }
 
-  let ccNumber = document.querySelector('#cc-num');
-  let zipcode = document.querySelector('#zip');
-  let cvv = document.querySelector('#cvv');
-  let email = document.querySelector('#mail');
+  const ccNumber = document.querySelector('#cc-num');
+  const zipcode = document.querySelector('#zip');
+  const cvv = document.querySelector('#cvv');
+  const email = document.querySelector('#mail');
+  const name = document.querySelector('#name');
 
-  let ccNumberRegex = /^[0-9]{13,16}$/;
-  let zipcodeRegex = /^(\d{5})?$/;
-  let cvvRegex = /^(\d{3})?$/;
-  let emailRegex = /[^\s@]+@[^\s@]+\.[^\s@]+/
+  errors.push(inputFormatValidation(name, /\S+/, 'Enter your name'));
+  errors.push(inputFormatValidation(email, /[^\s@]+@[^\s@]+\.[^\s@]+/, 'Enter a valid email address'));
 
-  let inputFormat = (element, regex, placeholderText) => {
-    if (regex.test(element.value) === false) {
-      element.value = '';
-      element.placeholder = placeholderText;
-      element.style.border = '2px dashed red';
-    }
+  if (titleSelect.value === 'other') {
+    errors.push(inputFormatValidation(otherJobTitle, /\S+/, 'Enter other job title'));
   }
 
-  inputFormat(ccNumber, ccNumberRegex, 'Enter 16 digit credit card number');
-  inputFormat(zipcode, zipcodeRegex, 'Enter 3 digit');
-  inputFormat(cvv, cvvRegex, 'Enter 3 digit');
-  inputFormat(email, emailRegex, 'Enter a valid email address');
+  if (designSelect.value === 'Select Theme') {
+    errors.push(selectFormatValidation(designSelect));
+  } else {
+    selectFormatValidation(designSelect, '#000');
+  }
+
+  if (paymentSelect.value === 'select_method') {
+    errors.push(selectFormatValidation(paymentSelect));
+  } else {
+    selectFormatValidation(paymentSelect, '#000');
+  }
+
+  if (paymentSelect.value === 'credit card') {
+    errors.push(inputFormatValidation(ccNumber, /^[0-9]{13,16}$/, 'Enter 16 digit credit card number'));
+    errors.push(inputFormatValidation(zipcode, /^(\d{5})?$/, 'Enter 3 digit'));
+    errors.push(inputFormatValidation(cvv, /^(\d{3})?$/, 'Enter 3 digit'));
+  }
+
+  if (errors.filter((err) => err === true).length > 0) {
+    e.preventDefault();
+  }
 });

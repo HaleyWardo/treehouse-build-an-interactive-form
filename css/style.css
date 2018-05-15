@@ -101,9 +101,7 @@ input[type="radio"] {
 	display: inline-block;
 }
 
-input::placeholder {
-	color: red;
-}
+
 
 #activityError {
 	margin-bottom: 20px;

@@ -247,10 +247,6 @@ submitButton.addEventListener('click', (e) => {
 
   for (i = 0; i < inputform.length; i++) {
     if (inputform[i].value === '') {
-
-      // inputform[i].style.border = '2px dashed red';
-      // inputform[i].placeholder = 'Required';
-
       document.documentElement.scrollTop = 0;
     } else {
       inputform[i].style.border = '2px solid #c1deeb';
@@ -265,6 +261,7 @@ submitButton.addEventListener('click', (e) => {
   if (isChecked === false) {
     activitiesContainer.insertAdjacentHTML('afterbegin', activityError);
     activityErrorMessage = true;
+    e.preventDefault();
   }
 
   const ccNumber = document.querySelector('#cc-num');
@@ -282,20 +279,22 @@ submitButton.addEventListener('click', (e) => {
 
   if (designSelect.value === 'Select Theme') {
     errors.push(selectFormatValidation(designSelect));
+    e.preventDefault();
   } else {
     selectFormatValidation(designSelect, '#000');
   }
 
   if (paymentSelect.value === 'select_method') {
     errors.push(selectFormatValidation(paymentSelect));
+    e.preventDefault();
   } else {
     selectFormatValidation(paymentSelect, '#000');
   }
 
   if (paymentSelect.value === 'credit card') {
     errors.push(inputFormatValidation(ccNumber, /^[0-9]{13,16}$/, 'Enter 16 digit credit card number'));
-    errors.push(inputFormatValidation(zipcode, /^(\d{5})?$/, 'Enter 3 digit'));
-    errors.push(inputFormatValidation(cvv, /^(\d{3})?$/, 'Enter 3 digit'));
+    errors.push(inputFormatValidation(zipcode, /^[0-9]{5}$/, 'Enter 5 digit'));
+    errors.push(inputFormatValidation(cvv, /^[0-9]{3}$/, 'Enter 3 digit'));
   }
 
   if (errors.filter((err) => err === true).length > 0) {
